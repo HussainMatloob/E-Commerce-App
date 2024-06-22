@@ -1,25 +1,33 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/Screens/add_to_cart_screen.dart';
+import 'package:e_commerce_app/models/product_details.dart';
 import 'package:flutter/material.dart';
-
-import '../models/product_details.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import '../controller/product_detail_controller.dart';
+import '../main.dart';
 import '../widgets/reuseable_gridview_widget.dart';
 import '../widgets/shimer_effect-weidget.dart';
 
-class WomensFashion extends StatefulWidget {
-  const WomensFashion({super.key});
+
+class ManShoesScreen extends StatefulWidget {
+  const ManShoesScreen({super.key});
 
   @override
-  State<WomensFashion> createState() => _WomensFashionState();
+  State<ManShoesScreen> createState() => _ManShoesScreenState();
 }
 
-class _WomensFashionState extends State<WomensFashion> {
-  @override
+class _ManShoesScreenState extends State<ManShoesScreen> {
   List<ProductDetails> details=[];
+  @override
   Widget build(BuildContext context) {
+
+    mq = MediaQuery.of(context).size;
     return Scaffold(
         body:StreamBuilder(
           stream: FirebaseFirestore.instance
-              .collection('EasyShoppingProducts').where('type',isEqualTo: "Women's Fashion").snapshots(),
+              .collection('EasyShoppingProducts').where('type',isEqualTo: "Man Shoes").snapshots(),
           builder: (context,snapshot){
             if(snapshot.hasData){
               final data = snapshot.data!.docs;

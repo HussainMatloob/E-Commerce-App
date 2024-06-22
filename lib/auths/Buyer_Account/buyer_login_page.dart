@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:e_commerce_app/controller/get_device_token_controller.dart';
 import 'package:e_commerce_app/widgets/home_bottom_bar.dart';
 import 'package:e_commerce_app/auths/Buyer_Account/email_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../main.dart';
 import '../../services/services.dart';
@@ -25,13 +27,12 @@ class _BuyerLoginPageState extends State<BuyerLoginPage> {
 
     _signInWithGoogle().then((value) async {
       //Navigator.pop(context);
-
       if (value != null) {
         if ((await ServicesOrApis.userExists())) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => HomeBottomBar()));
         } else {
-          await ServicesOrApis.createUserWithEmailAccount().then((value) {
+          await ServicesOrApis.createUserWithGoogleAccount().then((value) {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => HomeBottomBar()));
           });
@@ -52,7 +53,6 @@ class _BuyerLoginPageState extends State<BuyerLoginPage> {
   Future<UserCredential?> _signInWithGoogle() async {
     try {
       await InternetAddress.lookup('google.com');
-
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
@@ -99,7 +99,7 @@ class _BuyerLoginPageState extends State<BuyerLoginPage> {
           Container(
             child: Center(
               child: Text(
-                "Shopping Cart",
+                "Easy Shopping",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 30,
@@ -187,7 +187,10 @@ class _BuyerLoginPageState extends State<BuyerLoginPage> {
             height: mq.height * 0.05,
           ),
           ElevatedButton.icon(
-              onPressed: () {
+              onPressed: () async{
+                final DeviceTokenController deviceTokenController=Get.put(DeviceTokenController());
+                SharedPreferences sp=await SharedPreferences.getInstance();
+                sp.setString('deviceToken', deviceTokenController.deviceToken.toString());
                 _handleGoogleBtnClick();
               },
               style: ElevatedButton.styleFrom(

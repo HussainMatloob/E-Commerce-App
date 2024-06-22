@@ -1,7 +1,10 @@
+
+import 'package:e_commerce_app/Screens/home_categories_view.dart';
+import 'package:e_commerce_app/Screens/search_screen.dart';
 import 'package:e_commerce_app/widgets/reuseable_badge.dart';
 import 'package:flutter/material.dart';
+
 import '../main.dart';
-import 'home_categories_view.dart';
 import 'home_top_view.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,7 +13,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>  {
+
   @override
 
   Widget build(BuildContext context) {
@@ -32,15 +36,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
             decoration: BoxDecoration(
                 ),
-            child: Text("Shopping Cart",style: TextStyle(
+            child: Text("Easy Shopping",style: TextStyle(
                 fontSize: 25,
                 fontFamily: 'BerkshireSwash Regular',
                 color: Colors.green),),
           ),
           actions: [
-                      Icon(
-                        Icons.search,
-                        size: 27,
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchScreen()));
+                        },
+                        child: Icon(
+                          Icons.search,
+                          size: 27,
+                        ),
                       ),
             SizedBox(width: mq.width*0.05,),
             ReuseableBadge(),
@@ -48,10 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ]),
 
       body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
-
             HomeTopView(),
             HomeCategoriesView(),
           ],

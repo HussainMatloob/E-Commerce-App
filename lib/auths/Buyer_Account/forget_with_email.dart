@@ -68,14 +68,14 @@ class _ForgetWithEmailScreenState extends State<ForgetWithEmailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Shopping",
+                        "Easy",
                         style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Rubik Medium',
                             color: Colors.black),
                       ),
                       Text(
-                        "Cart",
+                        "Shopping",
                         style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Rubik Medium',
@@ -117,7 +117,7 @@ class _ForgetWithEmailScreenState extends State<ForgetWithEmailScreen> {
                       ),
                       hintText: 'Email',
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffFBF9FA),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -134,7 +134,9 @@ class _ForgetWithEmailScreenState extends State<ForgetWithEmailScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+
+                      },
                       child: const Text(
                         "Resend Email",
                         style: TextStyle(

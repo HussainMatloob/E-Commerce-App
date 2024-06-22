@@ -2,9 +2,11 @@ import 'package:e_commerce_app/widgets/home_bottom_bar.dart';
 import 'package:e_commerce_app/auths/Buyer_Account/forgot_with_contact.dart';
 import 'package:e_commerce_app/models/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../controller/get_device_token_controller.dart';
 import '../../main.dart';
 import '../../services/services.dart';
 import 'buyer_profile_page.dart';
@@ -256,6 +258,8 @@ class _NameScreenState extends State<NameScreen> {
                   SharedPreferences sp = await SharedPreferences.getInstance();
                   sp.setString('name', nameController.text);
                   sp.setString('password', passwordController.text);
+                  final DeviceTokenController deviceTokenController=Get.put(DeviceTokenController());
+                  sp.setString('deviceToken', deviceTokenController.deviceToken.toString());
                   // sp.setBool('Boolean', true);
 
                   // String? Name = sp.getString('name');
@@ -267,7 +271,7 @@ class _NameScreenState extends State<NameScreen> {
                         MaterialPageRoute(
                             builder: (context) => HomeBottomBar()));
                   } else {
-                    await ServicesOrApis.createUser().then((value) {
+                    await ServicesOrApis.createUserWithEmailOrContact().then((value) {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

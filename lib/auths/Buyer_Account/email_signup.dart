@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../controller/get_device_token_controller.dart';
 import '../../main.dart';
 
 class CustomerSignupPage extends StatefulWidget {
@@ -113,14 +114,14 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Shopping",
+                        "Easy",
                         style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Rubik Medium',
                             color: Colors.black),
                       ),
                       Text(
-                        "Cart",
+                        "Shopping",
                         style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Rubik Medium',
@@ -150,7 +151,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                       ),
                       hintText: 'Name',
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffFBF9FA),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -178,7 +179,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                       ),
                       hintText: 'Email',
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffFBF9FA),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -247,6 +248,8 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                               controller.loadingFunctionSignup(controller.loadingSignup);
                               SharedPreferences sp = await SharedPreferences.getInstance();
                               sp.setString('name', nameController.text);
+                              final DeviceTokenController deviceTokenController=Get.put(DeviceTokenController());
+                              sp.setString('deviceToken', deviceTokenController.deviceToken.toString());
                               Get.snackbar('Success','SignUp Successfully',
                                 colorText: Colors.black,
                                 backgroundColor: Colors.green,

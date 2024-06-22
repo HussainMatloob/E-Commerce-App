@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app/Screens/payment_method_screen.dart';
 import 'package:e_commerce_app/Screens/photo_view_screen.dart';
 import 'package:e_commerce_app/auths/Buyer_Account/buyer_login_page.dart';
 import 'package:e_commerce_app/controller/utils_controller.dart';
 import 'package:e_commerce_app/models/product_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../controller/add_to_cart_controller.dart';
 import '../main.dart';
 import '../services/services.dart';
@@ -21,7 +22,10 @@ class AddToCart extends StatefulWidget {
   State<AddToCart> createState() => _AddToCartState();
 }
 
-class _AddToCartState extends State<AddToCart> {
+class _AddToCartState extends State<AddToCart> with TickerProviderStateMixin{
+  late final AnimationController _controllerAnimate =
+  AnimationController(duration: const Duration(seconds: 1), vsync: this)
+    ..repeat();
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
@@ -39,6 +43,7 @@ class _AddToCartState extends State<AddToCart> {
             ],
           ),
           body: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
             child: Column(
               children: [
                 InkWell(
@@ -49,19 +54,27 @@ class _AddToCartState extends State<AddToCart> {
                             builder: (context) => PhotoViewer(
                                 productDetails: widget.productDetails)));
                   },
-                  child: Container(
-                    margin: EdgeInsets.all(mq.width * 0.02),
-                    height: mq.height * 0.5,
-                    width: mq.width * 0.999,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(40),
-                          bottomLeft: Radius.circular(40)),
-                      image: DecorationImage(
+                  child: Padding(
+                    padding: EdgeInsets.all(mq.width * 0.01),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(40),
+                            bottomLeft: Radius.circular(40)),
+                     child:  CachedNetworkImage(
+                       height: mq.height * 0.5,
+                       width: mq.width * 0.999,
+                        imageUrl: widget.productDetails.image![0]
+                            .toString(),
                         fit: BoxFit.fill,
-                        image: NetworkImage(
-                          widget.productDetails.image.toString(),
+                        placeholder: (context, url) => Center(
+                          child: SpinKitFadingCircle(
+                            color: Colors.grey,
+                            size: 50,
+                            controller: _controllerAnimate,
+                          ),
                         ),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
                       ),
                     ),
                   ),
@@ -135,7 +148,27 @@ class _AddToCartState extends State<AddToCart> {
                           SizedBox(
                             height: mq.height * 0.01,
                           ),
-                                Container(
+                          widget.productDetails.sale=='Sale'? Row(
+
+                            children: [
+                              SizedBox(
+                                width: mq.width * 0.02,
+                              ),
+                               Text("Rs:"+
+
+                                    widget.productDetails.salePrice
+                                        .toString(),
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                              SizedBox(width: mq.width*0.01,),
+                               Text(
+                                  widget.productDetails.price
+                                      .toString(),
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,decoration: TextDecoration.lineThrough),
+                                  textAlign: TextAlign.center,
+                                ),
+                            ],):Container(
                                   padding: EdgeInsets.only(left: mq.width*0.02),
                                   child: Text(
                                     "Rs. " + widget.productDetails.price.toString(),
@@ -153,15 +186,44 @@ class _AddToCartState extends State<AddToCart> {
                   children: [
                     InkWell(
                       onTap: () async {
-                if(ServicesOrApis.user != null) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentMethod()));
-                }
-                else{
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BuyerLoginPage()));
-                }
+                        if (ServicesOrApis.user != null) {
+                          EasyLoading.instance
+                            ..loadingStyle = EasyLoadingStyle.custom // Set the custom style
+                            ..textColor = Colors.white // Color of the loading status text
+                            ..indicatorColor = Colors.white // Color of the loading indicator
+                            ..progressColor = Colors.white // Progress color of the loading indicator (if applicable)
+                            ..backgroundColor = Colors.green // Background color of the loading indicator
+                            ..maskColor = Colors.red; // Mask color of the loading (if applicable)
+                          EasyLoading.show(status: 'Please Wait...');
+                          ServicesOrApis.addProductToCart(widget.productDetails)
+                              .then((value) {
+                            if (value == true) {
+                              EasyLoading.dismiss();
+
+                              ServicesOrApis.addTotalAndCount(widget.productDetails);
+                              Get.snackbar(
+                                'Success',
+                                'Add Item successfully',
+                                colorText: Colors.black,
+                                backgroundColor: Colors.green,
+                                snackPosition: SnackPosition.TOP,
+                                onTap: (SnackBar) {},
+                              );
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentMethod()));
+                            }
+                            else{
+                              EasyLoading.dismiss();
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentMethod()));
+                            }
+                          }).onError((error, stackTrace){
+                            EasyLoading.dismiss();
+                          });
+                        } else {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BuyerLoginPage()));
+                        }
                       },
                       child: Container(
                         height: mq.height*0.06,
@@ -183,21 +245,45 @@ class _AddToCartState extends State<AddToCart> {
                     InkWell(
                       onTap: () {
                         if (ServicesOrApis.user != null) {
+
+                          EasyLoading.instance
+                            ..loadingStyle = EasyLoadingStyle.custom // Set the custom style
+                            ..textColor = Colors.white // Color of the loading status text
+                            ..indicatorColor = Colors.white // Color of the loading indicator
+                            ..progressColor = Colors.white // Progress color of the loading indicator (if applicable)
+                            ..backgroundColor = Colors.green // Background color of the loading indicator
+                            ..maskColor = Colors.red; // Mask color of the loading (if applicable)
+                          EasyLoading.show(status: 'Please Wait...');
+
                           ServicesOrApis.addProductToCart(widget.productDetails)
                               .then((value) {
                             if (value == true) {
-                              addToCartController.addCounter();
-                              addToCartController
-                                  .addTotal(widget.productDetails.price!);
+                              EasyLoading.dismiss();
+
+                              ServicesOrApis.addTotalAndCount(widget.productDetails);
+
                               Get.snackbar(
                                 'Success',
                                 'Add Item successfully',
                                 colorText: Colors.black,
-                                backgroundColor: Colors.white24,
+                                backgroundColor: Colors.green,
                                 snackPosition: SnackPosition.TOP,
                                 onTap: (SnackBar) {},
                               );
                             }
+                            else{
+                              EasyLoading.dismiss();
+                              Get.snackbar(
+                                '',
+                                'Check your Cart this item already added',
+                                colorText: Colors.black,
+                                backgroundColor: Colors.green,
+                                snackPosition: SnackPosition.TOP,
+                                onTap: (SnackBar) {},
+                              );
+                            }
+                          }).onError((error, stackTrace){
+                            EasyLoading.dismiss();
                           });
                         } else {
                           Navigator.pushReplacement(
@@ -222,7 +308,9 @@ class _AddToCartState extends State<AddToCart> {
                       ),
                     ),
                   ],
-                )
+                ),
+                SizedBox(
+                   height: mq.height*0.02),
               ],
             ),
           ),

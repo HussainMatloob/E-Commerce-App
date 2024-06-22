@@ -15,6 +15,7 @@ class UserProfile {
   String? image;
   String? contact;
   String? createdAt;
+  String? userDeviceToken;
 
   UserProfile({
     this.id,
@@ -23,6 +24,7 @@ class UserProfile {
     this.image,
     this.contact,
     this.createdAt,
+    this.userDeviceToken,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
@@ -32,6 +34,7 @@ class UserProfile {
     image: json["image"],
     contact: json["contact"],
     createdAt: json["createdAt"],
+    userDeviceToken: json["userDeviceToken"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -41,5 +44,6 @@ class UserProfile {
     "image": image,
     "contact": contact,
     "createdAt": createdAt,
+    "userDeviceToken": userDeviceToken,
   };
 }

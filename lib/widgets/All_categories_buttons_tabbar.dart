@@ -1,4 +1,4 @@
-import 'package:e_commerce_app/Screens/just_for_you_screen.dart';
+import 'package:e_commerce_app/Screens/man_shoes_screen.dart';
 import 'package:e_commerce_app/Screens/watches_screen.dart';
 import 'package:e_commerce_app/Screens/mens_fashion_screen.dart';
 import 'package:e_commerce_app/Screens/womens_fashion_screen.dart';
@@ -6,32 +6,34 @@ import 'package:e_commerce_app/widgets/reuseable_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 
+import '../Screens/search_screen.dart';
 import '../main.dart';
-class CategoriesButtonsTabbar extends StatefulWidget {
-  const CategoriesButtonsTabbar({super.key});
+class AllCategoriesButtonsTabbar extends StatefulWidget {
+  const AllCategoriesButtonsTabbar({super.key});
 
   @override
-  State<CategoriesButtonsTabbar> createState() => _CategoriesButtonsTabbarState();
+  State<AllCategoriesButtonsTabbar> createState() => _AllCategoriesButtonsTabbarState();
 }
 
-class _CategoriesButtonsTabbarState extends State<CategoriesButtonsTabbar> {
+class _AllCategoriesButtonsTabbarState extends State<AllCategoriesButtonsTabbar> {
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Just for you"),
+        title: Text("All Categories"),
         actions: [
-          Icon(Icons.search),
+          InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchScreen()));
+              },
+              child: Icon(Icons.search)),
           SizedBox(
             width: mq.width * 0.02,
           ),
           ReuseableBadge(),
           SizedBox(width: 20,),
-          Icon(Icons.more_vert),
-          SizedBox(
-            width: mq.width * 0.02,
-          ),
+
         ],
       ),
       body:DefaultTabController(
@@ -53,19 +55,19 @@ class _CategoriesButtonsTabbarState extends State<CategoriesButtonsTabbar> {
               ),
               // Add your tabs here
               tabs:[
-                Tab(text: "Just For You",),
-                Tab(text: "Watches",),
-                Tab(text: "Men's Fashion"),
                 Tab(text: "Women's Fashion"),
+                Tab(text: "Men's Fashion"),
+                Tab(text: "Watches",),
+                Tab(text: "Man Shoes",),
               ],
             ),
             Expanded(
               child: TabBarView(
                 children: [
-                  JustForYou(),
-                  WatchesScreen(),
-                  MensFashion(),
                   WomensFashion(),
+                  MensFashion(),
+                  WatchesScreen(),
+                  ManShoesScreen(),
                 ],
               ),
             ),

@@ -8,6 +8,7 @@ class Util extends GetxController{
   bool favourite=false;
 
 
+
   ObsecureSignup(bool a){
     obsecurePasswordSignup=!a;
     update();

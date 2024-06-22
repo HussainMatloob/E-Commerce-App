@@ -85,14 +85,14 @@ class _CustomerLoginPageState extends State<CustomerLoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Shopping",
+                        "Easy",
                         style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Rubik Medium',
                             color: Colors.black),
                       ),
                       Text(
-                        "Cart",
+                        "Shopping",
                         style: TextStyle(
                             fontSize: 24,
                             fontFamily: 'Rubik Medium',
@@ -122,7 +122,7 @@ class _CustomerLoginPageState extends State<CustomerLoginPage> {
                       ),
                       hintText: 'Email',
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffFBF9FA),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -208,7 +208,7 @@ class _CustomerLoginPageState extends State<CustomerLoginPage> {
                                   Navigator.pushReplacement(context,
                                       MaterialPageRoute(builder: (context) => HomeBottomBar()));
                                 } else {
-                                  await ServicesOrApis.createUser().then((value) {
+                                  await ServicesOrApis.createUserWithEmailOrContact().then((value) {
                                     Navigator.pushReplacement(context,
                                         MaterialPageRoute(builder: (context) => HomeBottomBar()));
                                   });

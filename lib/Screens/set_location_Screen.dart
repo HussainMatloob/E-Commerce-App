@@ -54,9 +54,6 @@ class _SetLocationState extends State<SetLocation> {
     var response=await http.get(Uri.parse(request));
     var data=response.body.toString();
 
-    print('data');
-    print(data);
-
     if(response.statusCode==200)
     {
       setState(() {
@@ -108,7 +105,6 @@ class _SetLocationState extends State<SetLocation> {
                   ),
 
               ),
-
                    Expanded(
                      child: ListView.builder(
                             itemCount: _placesList.length,

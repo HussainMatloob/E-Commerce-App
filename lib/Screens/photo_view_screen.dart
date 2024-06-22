@@ -20,7 +20,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
             children: [
               PhotoView(
                 imageProvider: NetworkImage(
-                  widget.productDetails.image.toString(),
+                  widget.productDetails.image![0].toString(),
                 ),
 
                 minScale: PhotoViewComputedScale.contained, // Set minScale to cover the entire container

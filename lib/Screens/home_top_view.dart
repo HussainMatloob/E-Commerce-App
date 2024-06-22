@@ -1,14 +1,15 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_commerce_app/Screens/set_location_Screen.dart';
 import 'package:e_commerce_app/auths/Buyer_Account/buyer_login_page.dart';
 import 'package:e_commerce_app/controller/product_detail_controller.dart';
-import 'package:e_commerce_app/controller/utils_controller.dart';
 import 'package:e_commerce_app/models/user_location-model.dart';
 import 'package:e_commerce_app/services/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -21,9 +22,11 @@ class HomeTopView extends StatefulWidget {
   State<HomeTopView> createState() => _HomeTopViewState();
 }
 
-class _HomeTopViewState extends State<HomeTopView> {
+class _HomeTopViewState extends State<HomeTopView>  with TickerProviderStateMixin{
   @override
-
+  late final AnimationController _controllerAnimate =
+  AnimationController(duration: const Duration(seconds: 1), vsync: this)
+    ..repeat();
   Completer<GoogleMapController> _controller=Completer();
 
   final CameraPosition _kgooglePlex=const CameraPosition(
@@ -65,33 +68,46 @@ class _HomeTopViewState extends State<HomeTopView> {
                     return Stack(
                       alignment: Alignment.bottomCenter,
                       children: [
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            height: mq.height * 0.32,
-                            aspectRatio:MediaQuery.of(context).size.width /
-                                (6 * MediaQuery.of(context).size.height * 0.1), // You can adjust the aspect ratio as needed
-                            viewportFraction: 1.0, // Set viewport fraction to 1.0 for full page images
-                            autoPlay: true,
-                            enlargeCenterPage: false,
-                          ),
-                          items: productDetailsController.details.map((url) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(
-                                    margin: EdgeInsets.only(bottom: mq.height * 0.02),
-                                    height: mq.height * 0.5,
-                                    width: mq.width * 0.9999,
-                                    decoration:  BoxDecoration(
-                                        image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: NetworkImage(
-                                                url.image!)))
+                         Padding(
+                            padding: EdgeInsets.all(mq.width * 0.03),
+                            child: CarouselSlider(
+                              options: CarouselOptions(
+                                height: mq.height * 0.32,
+                                aspectRatio: MediaQuery.of(context).size.width /
+                                    (6 * MediaQuery.of(context).size.height * 0.1),
+                                viewportFraction: 1.0,
+                                autoPlay: true,
+                               // autoPlayInterval: Duration(seconds: 1),
+                                //autoPlayAnimationDuration: Duration(milliseconds: 3000),
+                                enlargeCenterPage: true,
+                              ),
+                              items: productDetailsController.categoriesItem.map((url) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                        child: CachedNetworkImage(
+                                          height: mq.height * 0.5,
+                                          width: mq.width * 0.9999,
+                                          imageUrl: url.image![0],
+                                          fit: BoxFit.fill,
+                                          placeholder: (context, url) => Center(
+                                            child: SpinKitFadingCircle(
+                                                    color: Colors.white,
+                                                    size: 50,
+                                                    controller: _controllerAnimate,
+                                                  ),
+                                          ),
+                                          errorWidget: (context, url, error) => Icon(Icons.error),
+                                        ),
+                                    );
+                                  },
                                 );
+                              }).toList(),
+                            ),
+                          ),
 
-                              },
-                            );
-                          }).toList(),
-                        ),
+
                         InkWell(
                           onTap: (){
                             _marker.addAll(_list);
@@ -162,32 +178,43 @@ class _HomeTopViewState extends State<HomeTopView> {
                     return Stack(
                       alignment: Alignment.bottomCenter,
                       children: [
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            height: mq.height * 0.32,
-                            aspectRatio:MediaQuery.of(context).size.width /
-                                (6 * MediaQuery.of(context).size.height * 0.1), // You can adjust the aspect ratio as needed
-                            viewportFraction: 1.0, // Set viewport fraction to 1.0 for full page images
-                            autoPlay: true,
-                            enlargeCenterPage: false,
-                          ),
-                          items: productDetailsController.details.map((url) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(
-                                    margin: EdgeInsets.only(bottom: mq.height * 0.02),
+
+                        Padding(
+                          padding: EdgeInsets.all(mq.width * 0.03),
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              height: mq.height * 0.32,
+                              aspectRatio: MediaQuery.of(context).size.width /
+                                  (6 * MediaQuery.of(context).size.height * 0.1),
+                              viewportFraction: 1.0,
+                              autoPlay: true,
+                              autoPlayInterval: Duration(seconds: 3),
+                              enlargeCenterPage: true,
+                            ),
+                            items: productDetailsController.categoriesItem.map((url) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
                                     height: mq.height * 0.5,
                                     width: mq.width * 0.9999,
-                                    decoration:  BoxDecoration(
-                                        image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: NetworkImage(
-                                                url.image!)))
-                                );
-
-                              },
-                            );
-                          }).toList(),
+                                    imageUrl:url.image![0],
+                                    fit: BoxFit.fill,
+                                    placeholder: (context, url) => Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 50,
+                                        controller: _controllerAnimate,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  ),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                          ),
                         ),
                         InkWell(
                           onTap: (){
@@ -254,32 +281,43 @@ class _HomeTopViewState extends State<HomeTopView> {
                   return Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      CarouselSlider(
-                        options: CarouselOptions(
-                          height: mq.height * 0.32,
-                          aspectRatio:MediaQuery.of(context).size.width /
-                              (6 * MediaQuery.of(context).size.height * 0.1), // You can adjust the aspect ratio as needed
-                          viewportFraction: 1.0, // Set viewport fraction to 1.0 for full page images
-                          autoPlay: true,
-                          enlargeCenterPage: false,
-                        ),
-                        items: productDetailsController.details.map((url) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: mq.height * 0.02),
-                                  height: mq.height * 0.5,
-                                  width: mq.width * 0.9999,
-                                  decoration:  BoxDecoration(
-                                      image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: NetworkImage(
-                                              url.image!)))
-                              );
 
-                            },
-                          );
-                        }).toList(),
+                      Padding(
+                        padding: EdgeInsets.all(mq.width * 0.03),
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            height: mq.height * 0.32,
+                            aspectRatio: MediaQuery.of(context).size.width /
+                                (6 * MediaQuery.of(context).size.height * 0.1),
+                            viewportFraction: 1.0,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 3),
+                            enlargeCenterPage: true,
+                          ),
+                          items: productDetailsController.categoriesItem.map((url) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: CachedNetworkImage(
+                                    height: mq.height * 0.5,
+                                    width: mq.width * 0.9999,
+                                    imageUrl: url.image![0],
+                                    fit: BoxFit.fill,
+                                    placeholder: (context, url) => Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 50,
+                                        controller: _controllerAnimate,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  ),
+                                );
+                              },
+                            );
+                          }).toList(),
+                        ),
                       ),
                       InkWell(
                         onTap: (){
@@ -352,32 +390,43 @@ class _HomeTopViewState extends State<HomeTopView> {
           return Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: mq.height * 0.32,
-                  aspectRatio:MediaQuery.of(context).size.width /
-                      (6 * MediaQuery.of(context).size.height * 0.1), // You can adjust the aspect ratio as needed
-                  viewportFraction: 1.0, // Set viewport fraction to 1.0 for full page images
-                  autoPlay: true,
-                  enlargeCenterPage: true
-                ),
-                items: productDetailsController.details.map((url) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                     return Container(
-                        margin: EdgeInsets.only(bottom: mq.height * 0.02),
-                        height: mq.height * 0.5,
-                        width: mq.width * 0.9999,
-                        decoration:  BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage(
-                                    url.image!)))
-                      );
 
-                    },
-                  );
-                }).toList(),
+              Padding(
+                padding: EdgeInsets.all(mq.width * 0.03),
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    height: mq.height * 0.32,
+                    aspectRatio: MediaQuery.of(context).size.width /
+                        (6 * MediaQuery.of(context).size.height * 0.1),
+                    viewportFraction: 1.0,
+                    autoPlay: true,
+                    autoPlayInterval: Duration(seconds: 3),
+                    enlargeCenterPage: true,
+                  ),
+                  items: productDetailsController.categoriesItem.map((url) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: CachedNetworkImage(
+                            height: mq.height * 0.5,
+                            width: mq.width * 0.9999,
+                            imageUrl:url.image![0],
+                            fit: BoxFit.fill,
+                            placeholder: (context, url) => Center(
+                              child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 50,
+                                controller: _controllerAnimate,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
               InkWell(
                 onTap: (){
