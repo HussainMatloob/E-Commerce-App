@@ -248,7 +248,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                               controller.loadingFunctionSignup(controller.loadingSignup);
                               SharedPreferences sp = await SharedPreferences.getInstance();
                               sp.setString('name', nameController.text);
-                              final DeviceTokenController deviceTokenController=Get.put(DeviceTokenController());
+                              final NotificationService deviceTokenController=Get.put(NotificationService());
                               sp.setString('deviceToken', deviceTokenController.deviceToken.toString());
                               Get.snackbar('Success','SignUp Successfully',
                                 colorText: Colors.black,

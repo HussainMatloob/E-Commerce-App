@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../main.dart';
 import '../../services/services.dart';
 import 'account_with_contact.dart';
-import 'buyer_profile_page.dart';
 
 class BuyerLoginPage extends StatefulWidget {
   const BuyerLoginPage({super.key});
@@ -64,12 +62,13 @@ class _BuyerLoginPageState extends State<BuyerLoginPage> {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Check internet',
+        e.toString(),
         colorText: Colors.black,
         backgroundColor: Colors.green,
         snackPosition: SnackPosition.TOP,
         onTap: (SnackBar) {},
       );
+      print("The error is"+e.toString());
       return null;
     }
   }
@@ -188,7 +187,7 @@ class _BuyerLoginPageState extends State<BuyerLoginPage> {
           ),
           ElevatedButton.icon(
               onPressed: () async{
-                final DeviceTokenController deviceTokenController=Get.put(DeviceTokenController());
+                final NotificationService deviceTokenController=Get.put(NotificationService());
                 SharedPreferences sp=await SharedPreferences.getInstance();
                 sp.setString('deviceToken', deviceTokenController.deviceToken.toString());
                 _handleGoogleBtnClick();

@@ -3,7 +3,9 @@ import 'package:e_commerce_app/Screens/home_categories_view.dart';
 import 'package:e_commerce_app/Screens/search_screen.dart';
 import 'package:e_commerce_app/widgets/reuseable_badge.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../controller/get_device_token_controller.dart';
 import '../main.dart';
 import 'home_top_view.dart';
 class HomeScreen extends StatefulWidget {
@@ -14,7 +16,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>  {
+@override
+final NotificationService notificationService=Get.put(NotificationService());
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    notificationService.requestNotificationPermission();
+    notificationService.firebaseInIt();
+    //deviceTokenAndNotificationPermissionController.isTokenRefresh();
+    print(notificationService.deviceToken);
 
+  }
   @override
 
   Widget build(BuildContext context) {

@@ -258,7 +258,7 @@ class _NameScreenState extends State<NameScreen> {
                   SharedPreferences sp = await SharedPreferences.getInstance();
                   sp.setString('name', nameController.text);
                   sp.setString('password', passwordController.text);
-                  final DeviceTokenController deviceTokenController=Get.put(DeviceTokenController());
+                  final NotificationService deviceTokenController=Get.put(NotificationService());
                   sp.setString('deviceToken', deviceTokenController.deviceToken.toString());
                   // sp.setBool('Boolean', true);
 

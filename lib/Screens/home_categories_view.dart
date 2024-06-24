@@ -126,7 +126,7 @@ class _HomeCategoriesViewState extends State<HomeCategoriesView>
                 top: mq.height * 0.02,
                 left: mq.width * 0.017,
                 right: mq.width * 0.017),
-            height: mq.height * 0.34,
+            height: mq.height * 0.35,
             width: mq.width * 0.95,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(10)),
