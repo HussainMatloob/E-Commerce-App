@@ -1,5 +1,6 @@
-  import 'dart:math';
-
+import 'dart:io';
+import 'dart:math';
+import 'package:e_commerce_app/controller/utils_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
   class NotificationService extends GetxController {
+    final Util util=Get.put(Util());
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -17,11 +19,11 @@ import 'package:get/get.dart';
       super.onInit();
       getDeviceToken();
       requestNotificationPermission();
-      initLocalNotification();
-      firebaseInIt();
+     // initLocalNotification();
+      //firebaseInIt();
     }
 
-    void initLocalNotification() async {
+    void initLocalNotification(BuildContext context,RemoteMessage message) async {
       var androidInitialization = const AndroidInitializationSettings('@mipmap/ic_launcher');
       var iosInitialization = const DarwinInitializationSettings();
       var initializationSetting = InitializationSettings(
@@ -32,18 +34,28 @@ import 'package:get/get.dart';
       await _flutterLocalNotificationsPlugin.initialize(
         initializationSetting,
         onDidReceiveNotificationResponse: (payload) {
-          // Handle notification response
+          handleMessage(context, message);
         },
       );
     }
 
-    void firebaseInIt() {
+    void firebaseInIt(BuildContext context) {
       FirebaseMessaging.onMessage.listen((message) {
         if (kDebugMode) {
           print(message.notification?.title.toString());
           print(message.notification?.body.toString());
+          print(message.data.toString());
+          print(message.data['type'].toString());
+          print(message.data['id'].toString());
         }
-        showNotification(message);
+        if(Platform.isAndroid){
+          //The initLocalNotification function run when click in notification also app currently open
+          initLocalNotification(context,message);
+          showNotification(message);
+        }
+        else{
+          showNotification(message);
+        }
       });
     }
 
@@ -57,19 +69,21 @@ import 'package:get/get.dart';
 
         // For Android
         AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-          channel.id,
-          channel.name,
+          channel.id.toString(),
+          channel.name.toString(),
           channelDescription: 'Your Channel description',
           importance: Importance.high,
           priority: Priority.high,
+          playSound: true,
           ticker: 'ticker',
+          sound: channel.sound
         );
 
         // For iOS
         DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
+          presentAlert: true,
           presentSound: true,
           presentBadge: true,
-          presentAlert: true,
         );
 
         NotificationDetails notificationDetails = NotificationDetails(
@@ -143,5 +157,25 @@ import 'package:get/get.dart';
           onTap: (SnackBar) {},
         );
       }
+    }
+
+
+//Click on notification When app in background or terminated then run setupInteractionMessage function
+    Future<void> setupInteractionMessage(BuildContext context) async{
+      //When app is Terminated
+     RemoteMessage? initialMessage=await FirebaseMessaging.instance.getInitialMessage();
+     if(initialMessage!=null){
+       handleMessage(context, initialMessage);
+     }
+     // When app is is background
+      FirebaseMessaging.onMessageOpenedApp.listen((event){
+       handleMessage(context, event);
+     });
+    }
+
+    void handleMessage(BuildContext context,RemoteMessage message){
+     if(message.data['type']=='msg'){
+         util.bottomNavIndex(1);
+     }
     }
   }

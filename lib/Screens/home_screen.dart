@@ -22,7 +22,8 @@ final NotificationService notificationService=Get.put(NotificationService());
     // TODO: implement initState
     super.initState();
     notificationService.requestNotificationPermission();
-    notificationService.firebaseInIt();
+    notificationService.setupInteractionMessage(context);
+    notificationService.firebaseInIt(context);
     //deviceTokenAndNotificationPermissionController.isTokenRefresh();
     print(notificationService.deviceToken);
 
