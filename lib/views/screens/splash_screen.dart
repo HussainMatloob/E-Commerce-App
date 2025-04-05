@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'package:e_commerce_app/views/screens/test_payment_methods_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../custom_widgets/home_bottom_bar.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
+
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
@@ -22,17 +23,15 @@ class _SplashScreenState extends State<SplashScreen> {
           statusBarColor: Colors.white60));
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) =>HomeBottomBar()));
+          context, MaterialPageRoute(builder: (context) => HomeBottomBar()));
 
       // Navigator.pushReplacement(
       //     context, MaterialPageRoute(builder: (context) =>PaymentView()));
 
-
-
-     // context.go('/home');
-
+      // context.go('/home');
     });
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,

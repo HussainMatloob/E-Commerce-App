@@ -12,10 +12,12 @@ class AllCategoriesButtonsTabbar extends StatefulWidget {
   const AllCategoriesButtonsTabbar({super.key});
 
   @override
-  State<AllCategoriesButtonsTabbar> createState() => _AllCategoriesButtonsTabbarState();
+  State<AllCategoriesButtonsTabbar> createState() =>
+      _AllCategoriesButtonsTabbarState();
 }
 
-class _AllCategoriesButtonsTabbarState extends State<AllCategoriesButtonsTabbar> {
+class _AllCategoriesButtonsTabbarState
+    extends State<AllCategoriesButtonsTabbar> {
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
@@ -24,22 +26,24 @@ class _AllCategoriesButtonsTabbarState extends State<AllCategoriesButtonsTabbar>
         title: Text("All Categories"),
         actions: [
           InkWell(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchScreen()));
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchScreen()));
               },
               child: Icon(Icons.search)),
           SizedBox(
             width: mq.width * 0.02,
           ),
           ReuseableBadge(),
-          SizedBox(width: 20,),
-
+          SizedBox(
+            width: 20,
+          ),
         ],
       ),
-      body:DefaultTabController(
+      body: DefaultTabController(
         length: 4,
         child: Column(
-          children:[
+          children: [
             ButtonsTabBar(
               // Customize the appearance and behavior of the tab bar
               backgroundColor: Colors.green,
@@ -54,26 +58,30 @@ class _AllCategoriesButtonsTabbarState extends State<AllCategoriesButtonsTabbar>
                 fontWeight: FontWeight.bold,
               ),
               // Add your tabs here
-              tabs:[
+              tabs: [
                 Tab(text: "Women's Fashion"),
                 Tab(text: "Men's Fashion"),
-                Tab(text: "Watches",),
-                Tab(text: "Man Shoes",),
+                Tab(
+                  text: "Watches",
+                ),
+                Tab(
+                  text: "Man Shoes",
+                ),
               ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  WomensFashion(),
-                  MensFashion(),
-                  WatchesScreen(),
-                  ManShoesScreen(),
-                ],
-              ),
-            ),
+            // Expanded(
+            //   child: TabBarView(
+            //     children: [
+            //       WomensFashion(),
+            //       MensFashion(),
+            //       WatchesScreen(),
+            //       ManShoesScreen(),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
-      ) ,
+      ),
     );
   }
 }

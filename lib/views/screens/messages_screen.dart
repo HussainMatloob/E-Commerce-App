@@ -63,7 +63,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      if (notificationService.deviceToken != null) {
+                        Notifications.sendNotificationToSelectedDevice(
+                            "cH0c30PZRXaf0GKFmrFnT-:APA91bGTLPPh1w2Lrsr-Tr5L3PLTO1Nb2IJBkf8ngErvM3yZwX69zn0yLH1rY6O3D0J-cvzKGwRRuUm7wqYYG-SMqbfMUQ-RONv9DxxBKv-J1qpqWDix1cKKGPVg3M5GhFxF-2K_fx5h",
+                            context);
+                      }
+                    },
                     child: Container(
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(

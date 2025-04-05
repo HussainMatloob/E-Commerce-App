@@ -190,3 +190,65 @@ class NotificationService extends GetxController {
     }
   }
 }
+
+class Notifications {
+  static Future<String> getAccessToken() async {
+    final serviceAccountJson = {};
+    List<String> scopes = [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/firebase.database",
+      "https://www.googleapis.com/auth/firebase.messaging"
+    ];
+
+    http.Client client = await auth.clientViaServiceAccount(
+      auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+      scopes,
+    );
+
+    //get the access token
+    auth.AccessCredentials credentials =
+        await auth.obtainAccessCredentialsViaServiceAccount(
+      auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+      scopes,
+      client,
+    );
+    client.close();
+    return credentials.accessToken.data;
+  }
+
+  static sendNotificationToSelectedDevice(
+      String deviceToken, BuildContext context) async {
+    final String serverAccessTokenKey = await getAccessToken();
+    String endPointCloudFirebaseMessaging =
+        "https://fcm.googleapis.com/v1/projects/flutterdatabase-f0d26/messages:send";
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final Map<String, dynamic> message = {
+      'message': {
+        'token': deviceToken,
+        'notification': {
+          'title': 'Easy Shopping',
+          'body': 'Sale 50 percent off',
+          //'sound': 'default',
+          //'tag':time
+        },
+        'data': {'type': 'msg', 'id': time}
+      }
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse(endPointCloudFirebaseMessaging),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        //This is Server key
+        'Authorization': 'Bearer $serverAccessTokenKey'
+      },
+      body: jsonEncode(message),
+    );
+
+    if (response.statusCode == 200) {
+      print("Notification send successfully");
+    } else {
+      print("Your Notification not send");
+    }
+  }
+}
